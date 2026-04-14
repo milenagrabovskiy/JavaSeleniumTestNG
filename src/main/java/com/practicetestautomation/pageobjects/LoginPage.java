@@ -1,0 +1,49 @@
+package com.practicetestautomation.pageobjects;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+
+
+public class LoginPage extends BasePage{
+
+    private By usernameInputLocator = By.id("username");  // this is NOT WebElement, this is only Locator for element!!
+    private By passwordInputField = By.id("password");
+    private By submitBtn = By.id("submit");
+    private By errorMessage = By.id("error");
+
+
+    public LoginPage(WebDriver driver) {
+        super(driver);
+
+    }
+
+    public void visitLoginPage() {
+        visit("https://practicetestautomation.com/practice-test-login/");
+    }
+
+    public void enterUsername(String username) {
+        driver.findElement(usernameInputLocator).sendKeys(username);
+    }
+
+    public void enterPassword(String password) {
+        driver.findElement(passwordInputField).sendKeys(password);
+    }
+
+    public void clickSubmitBtn() {
+        driver.findElement(submitBtn).click();
+    }
+
+    public SuccessfulLoginPage executeLogin(String username, String password) {
+        enterUsername(username);
+        enterPassword(password);
+        clickSubmitBtn();
+        return new SuccessfulLoginPage(driver);
+    }
+
+    public String getErrorMessage() {
+        WebElement errorMsgElement = waitForElement(errorMessage);
+        return errorMsgElement.getText();
+    }
+
+}
