@@ -5,6 +5,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
@@ -39,7 +40,13 @@ public class BaseTest {
                 driver = new ChromeDriver(options);
                 break;
             case "firefox":
-                driver = new FirefoxDriver();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+
+                if (System.getProperty("headless") != null) {
+                    firefoxOptions.addArguments("--headless");
+                }
+
+                driver = new FirefoxDriver(firefoxOptions);
                 break;
             default:
                 logger.warning("Configuration for " + browser + " is missing. Running tests in chrome by default");
@@ -55,7 +62,9 @@ public class BaseTest {
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
         logger.info("Quitting driver...");
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
 }
