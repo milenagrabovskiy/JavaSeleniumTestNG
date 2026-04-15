@@ -3,6 +3,7 @@ package com.practicetestautomation.tests;
 import com.practicetestautomation.tests.exceptions.ExceptionsTests;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -24,7 +25,14 @@ public class BaseTest {
         logger.info("Running test in: " + browser);
         switch (browser.toLowerCase()) {
             case "chrome":
-                driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+                if (System.getProperty("headless") != null) {
+                    options.addArguments("--headless=new");
+                    options.addArguments("--no-sandbox");
+                    options.addArguments("--disable-dev-shm-usage");
+                }
+                driver = new ChromeDriver(options);
+
                 break;
             case "firefox":
                 driver = new FirefoxDriver();
@@ -37,7 +45,6 @@ public class BaseTest {
         // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));  // implicit wait in setup
 
         // Open page
-        driver = new ChromeDriver();
         driver.get("https://practicetestautomation.com/practice-test-exceptions/");
     }
 
