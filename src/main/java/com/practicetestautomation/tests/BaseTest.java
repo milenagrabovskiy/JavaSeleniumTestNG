@@ -26,13 +26,17 @@ public class BaseTest {
         switch (browser.toLowerCase()) {
             case "chrome":
                 ChromeOptions options = new ChromeOptions();
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--remote-allow-origins=*");
+
+                // Only headless when system property is passed
                 if (System.getProperty("headless") != null) {
                     options.addArguments("--headless=new");
-                    options.addArguments("--no-sandbox");
-                    options.addArguments("--disable-dev-shm-usage");
+                    options.addArguments("--disable-gpu");
                 }
-                driver = new ChromeDriver(options);
 
+                driver = new ChromeDriver(options);
                 break;
             case "firefox":
                 driver = new FirefoxDriver();
