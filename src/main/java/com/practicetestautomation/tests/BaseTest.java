@@ -3,7 +3,9 @@ package com.practicetestautomation.tests;
 import com.practicetestautomation.tests.exceptions.ExceptionsTests;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
@@ -24,10 +26,27 @@ public class BaseTest {
         logger.info("Running test in: " + browser);
         switch (browser.toLowerCase()) {
             case "chrome":
-                driver = new ChromeDriver();
+                ChromeOptions options = new ChromeOptions();
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--remote-allow-origins=*");
+
+                // Only headless when system property is passed
+                if (System.getProperty("headless") != null) {
+                    options.addArguments("--headless=new");
+                    options.addArguments("--disable-gpu");
+                }
+
+                driver = new ChromeDriver(options);
                 break;
             case "firefox":
-                driver = new FirefoxDriver();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+
+                if (System.getProperty("headless") != null) {
+                    firefoxOptions.addArguments("--headless");
+                }
+
+                driver = new FirefoxDriver(firefoxOptions);
                 break;
             default:
                 logger.warning("Configuration for " + browser + " is missing. Running tests in chrome by default");
@@ -37,14 +56,15 @@ public class BaseTest {
         // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));  // implicit wait in setup
 
         // Open page
-        driver = new ChromeDriver();
         driver.get("https://practicetestautomation.com/practice-test-exceptions/");
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
         logger.info("Quitting driver...");
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 
 }
